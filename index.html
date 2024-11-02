@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitDoctor - AI-Powered Code Review Assistant</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/validator/13.11.0/validator.min.js"></script>
+    <style>
+        :root {
+            --primary: #2D333B;
+            --secondary: #444C56;
+            --accent: #539BF5;
+            --text: #ADBAC7;
+            --heading: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--primary);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .card {
+            background: var(--secondary);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            margin: 2rem auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .brand {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--heading);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .brand::before {
+            content: "{ }";
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        .tag {
+            background: var(--accent);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 1rem 0;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--heading);
+        }
+
+        .code-text {
+            font-family: monospace;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            margin: 1.5rem auto;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .email-form {
+            display: flex;
+            max-width: 500px;
+            margin: 2rem auto;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        input[type="email"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--primary);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        input[type="email"]::placeholder {
+            color: #666;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(83, 155, 245, 0.2);
+        }
+
+        button {
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(83, 155, 245, 0.3);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            text-align: left;
+        }
+
+        .feature {
+            padding: 1.5rem;
+            border-radius: 8px;
+            background: var(--primary);
+        }
+
+        .feature-title {
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            color: var(--heading);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-title::before {
+            content: "→";
+            color: var(--accent);
+        }
+
+        .feature-text {
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .success {
+            background: rgba(83, 155, 245, 0.1);
+            color: var(--accent);
+        }
+
+        .error {
+            background: rgba(255, 86, 86, 0.1);
+            color: #ff5656;
+        }
+
+        @media (max-width: 600px) {
+            .email-form {
+                flex-direction: column;
+            }
+            
+            input[type="email"], button {
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="brand">GitDoctor</div>
+            <div>
+                <span class="tag">Built for developers</span>
+                <span class="tag">AI-powered</span>
+            </div>
+            <h1>Your AI Code Review Assistant</h1>
+            <p class="subtitle">
+                Stop getting nitpicked in code reviews. GitDoctor analyzes your changes before you create a PR, 
+                catching common issues and suggesting improvements using AI.
+            </p>
+            
+            <form class="email-form" id="waitlistForm">
+                <input type="email" id="email" placeholder="your@email.com" required>
+                <button type="submit">Join Private Beta</button>
+            </form>
+            
+            <div id="message" class="message"></div>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-title">AI-Powered Review</div>
+                    <div class="feature-text">
+                        Advanced AI analyzes your code changes before you create a PR, 
+                        catching potential issues and suggesting improvements.
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">GitHub Desktop Integration</div>
+                    <div class="feature-text">
+                        Built on top of GitHub Desktop, maintaining all the features you love 
+                        while adding powerful AI capabilities.
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Instant Feedback</div>
+                    <div class="feature-text">
+                        Get immediate suggestions for code improvements, documentation, 
+                        and best practices before you raise your PR.
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Time Saver</div>
+                    <div class="feature-text">
+                        Reduce review cycles and avoid back-and-forth discussions by catching 
+                        common issues before they reach your reviewers.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('waitlistForm');
+        const messageDiv = document.getElementById('message');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            if (!validator.isEmail(email)) {
+                showMessage('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            showMessage('Thanks for joining the GitDoctor private beta! We\'ll be in touch soon.', 'success');
+            form.reset();
+        });
+        
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
