@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GitDoctor - AI-Powered Code Review Assistant</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/validator/13.11.0/validator.min.js"></script>
+    <!-- Add Inter font for Loops.so form -->
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
         :root {
             --primary: #2D333B;
             --secondary: #444C56;
             --accent: #539BF5;
             --text: #ADBAC7;
             --heading: #FFFFFF;
+            --error: #ff5656;
+            --success: #2ea043;
         }
 
         body {
@@ -76,11 +81,6 @@
             color: var(--heading);
         }
 
-        .code-text {
-            font-family: monospace;
-            color: var(--accent);
-        }
-
         .subtitle {
             font-size: 1.25rem;
             margin: 1.5rem auto;
@@ -88,51 +88,82 @@
             max-width: 600px;
         }
 
-        .email-form {
-            display: flex;
+        /* Updated styles for Loops.so form integration */
+        .newsletter-form-container {
             max-width: 500px;
             margin: 2rem auto;
+        }
+
+        .newsletter-form {
+            display: flex;
             gap: 1rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
-        input[type="email"] {
+        .newsletter-form-input {
             flex: 1;
             min-width: 200px;
-            padding: 1rem 1.5rem;
-            border: 1px solid var(--accent);
-            border-radius: 8px;
-            font-size: 1rem;
-            background: var(--primary);
-            color: var(--text);
+            padding: 1rem 1.5rem !important;
+            border: 1px solid var(--accent) !important;
+            border-radius: 8px !important;
+            font-size: 1rem !important;
+            background: var(--primary) !important;
+            color: var(--text) !important;
             transition: all 0.3s ease;
+            font-family: inherit !important;
         }
 
-        input[type="email"]::placeholder {
-            color: #666;
+        .newsletter-form-input::placeholder {
+            color: #666 !important;
         }
 
-        input[type="email"]:focus {
+        .newsletter-form-input:focus {
             outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(83, 155, 245, 0.2);
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px rgba(83, 155, 245, 0.2) !important;
         }
 
-        button {
-            background: var(--accent);
-            color: var(--primary);
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
+        .newsletter-form-button, 
+        .newsletter-loading-button {
+            background: var(--accent) !important;
+            color: var(--primary) !important;
+            border: none !important;
+            padding: 1rem 2rem !important;
+            border-radius: 8px !important;
+            font-size: 1rem !important;
+            font-weight: bold !important;
             cursor: pointer;
             transition: all 0.3s ease;
+            height: auto !important;
         }
 
-        button:hover {
+        .newsletter-form-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(83, 155, 245, 0.3);
+            box-shadow: 0 4px 12px rgba(83, 155, 245, 0.3) !important;
+        }
+
+        .newsletter-success,
+        .newsletter-error {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .newsletter-success-message {
+            color: var(--success) !important;
+            font-family: inherit !important;
+        }
+
+        .newsletter-error-message {
+            color: var(--error) !important;
+            font-family: inherit !important;
+        }
+
+        .newsletter-back-button {
+            color: var(--text) !important;
+            font-family: inherit !important;
         }
 
         .features {
@@ -169,30 +200,20 @@
             font-size: 0.95rem;
         }
 
-        .message {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .success {
-            background: rgba(83, 155, 245, 0.1);
-            color: var(--accent);
-        }
-
-        .error {
-            background: rgba(255, 86, 86, 0.1);
-            color: #ff5656;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 600px) {
-            .email-form {
+            .newsletter-form {
                 flex-direction: column;
             }
             
-            input[type="email"], button {
-                width: 100%;
+            .newsletter-form-input, 
+            .newsletter-form-button,
+            .newsletter-loading-button {
+                width: 100% !important;
             }
 
             h1 {
@@ -219,12 +240,21 @@
                 catching common issues and suggesting improvements using AI.
             </p>
             
-            <form class="email-form" id="waitlistForm">
-                <input type="email" id="email" placeholder="your@email.com" required>
-                <button type="submit">Join Private Beta</button>
-            </form>
-            
-            <div id="message" class="message"></div>
+            <!-- Loops.so Form Integration -->
+            <div class="newsletter-form-container">
+                <form class="newsletter-form" action="https://app.loops.so/api/newsletter-form/cm30g706r008udv8uda4vo3rx" method="POST">
+                    <input class="newsletter-form-input" name="newsletter-form-input" type="email" placeholder="your@email.com" required>
+                    <button type="submit" class="newsletter-form-button">Join Private Beta</button>
+                    <button type="button" class="newsletter-loading-button" style="display: none;">Please wait...</button>
+                </form>
+                <div class="newsletter-success" style="display: none;">
+                    <p class="newsletter-success-message">Thanks! We'll be in touch!</p>
+                </div>
+                <div class="newsletter-error" style="display: none;">
+                    <p class="newsletter-error-message">Oops! Something went wrong, please try again</p>
+                </div>
+                <button class="newsletter-back-button" type="button" style="display: none;">&larr; Back</button>
+            </div>
 
             <div class="features">
                 <div class="feature">
@@ -259,33 +289,122 @@
         </div>
     </div>
 
+    <!-- Loops.so Form Script -->
     <script>
-        const form = document.getElementById('waitlistForm');
-        const messageDiv = document.getElementById('message');
+    function submitHandler(event) {
+        event.preventDefault();
+        var container = event.target.parentNode;
+        var form = container.querySelector(".newsletter-form");
+        var formInput = container.querySelector(".newsletter-form-input");
+        var success = container.querySelector(".newsletter-success");
+        var errorContainer = container.querySelector(".newsletter-error");
+        var errorMessage = container.querySelector(".newsletter-error-message");
+        var backButton = container.querySelector(".newsletter-back-button");
+        var submitButton = container.querySelector(".newsletter-form-button");
+        var loadingButton = container.querySelector(".newsletter-loading-button");
         
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            
-            if (!validator.isEmail(email)) {
-                showMessage('Please enter a valid email address', 'error');
-                return;
-            }
-            
-            showMessage('Thanks for joining the GitDoctor private beta! We\'ll be in touch soon.', 'success');
-            form.reset();
-        });
-        
-        function showMessage(text, type) {
-            messageDiv.textContent = text;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-            
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 5000);
+        const rateLimit = () => {
+            errorContainer.style.display = "flex";
+            errorMessage.innerText = "Too many signups, please try again in a little while";
+            submitButton.style.display = "none";
+            formInput.style.display = "none";
+            backButton.style.display = "block";
         }
+
+        // Compare current time with time of previous sign up
+        var time = new Date();
+        var timestamp = time.valueOf();
+        var previousTimestamp = localStorage.getItem("loops-form-timestamp");
+
+        // If last sign up was less than a minute ago
+        // display error
+        if (previousTimestamp && Number(previousTimestamp) + 60000 > timestamp) {
+            rateLimit();
+            return;
+        }
+        localStorage.setItem("loops-form-timestamp", timestamp);
+
+        submitButton.style.display = "none";
+        loadingButton.style.display = "flex";
+
+        var formBody = "userGroup=&mailingLists=&email=" 
+            + encodeURIComponent(formInput.value);
+
+        fetch(event.target.action, {
+            method: "POST",
+            body: formBody,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        })
+            .then((res) => [res.ok, res.json(), res])
+            .then(([ok, dataPromise, res]) => {
+                if (ok) {
+                    // If response successful
+                    // display success
+                    success.style.display = "flex";
+                    form.reset();
+                } else {
+                    // If response unsuccessful
+                    // display error message or response status
+                    dataPromise.then(data => {
+                        errorContainer.style.display = "flex";
+                        errorMessage.innerText = data.message
+                            ? data.message
+                            : res.statusText;
+                    });
+                }
+            })
+            .catch(error => {
+                // check for cloudflare error
+                if (error.message === "Failed to fetch") {
+                    rateLimit();
+                    return;
+                }
+                // If error caught
+                // display error message if available
+                errorContainer.style.display = "flex";
+                if (error.message) errorMessage.innerText = error.message;
+                localStorage.setItem("loops-form-timestamp", '');
+            })
+            .finally(() => {
+                formInput.style.display = "none";
+                loadingButton.style.display = "none";
+                backButton.style.display = "block";
+            });
+    }
+
+    function resetFormHandler(event) {
+        var container = event.target.parentNode;
+        var formInput = container.querySelector(".newsletter-form-input");
+        var success = container.querySelector(".newsletter-success");
+        var errorContainer = container.querySelector(".newsletter-error");
+        var errorMessage = container.querySelector(".newsletter-error-message");
+        var backButton = container.querySelector(".newsletter-back-button");
+        var submitButton = container.querySelector(".newsletter-form-button");
+
+        success.style.display = "none";
+        errorContainer.style.display = "none";
+        errorMessage.innerText = "Oops! Something went wrong, please try again";
+        backButton.style.display = "none";
+        formInput.style.display = "flex";
+        submitButton.style.display = "flex";
+    }
+
+    var formContainers = document.getElementsByClassName("newsletter-form-container");
+
+    for (var i = 0; i < formContainers.length; i++) {
+        var formContainer = formContainers[i]
+        var handlersAdded = formContainer.classList.contains('newsletter-handlers-added')
+        if (handlersAdded) continue;
+        formContainer
+            .querySelector(".newsletter-form")
+            .addEventListener("submit", submitHandler);
+        formContainer
+            .querySelector(".newsletter-back-button")
+            .addEventListener("click", resetFormHandler);
+        formContainer.classList.add("newsletter-handlers-added");
+    }
     </script>
 </body>
 </html>
